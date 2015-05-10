@@ -1,0 +1,2 @@
+#Route For HelloController
+GET                     /hello                  controllers.HelloController.hello
