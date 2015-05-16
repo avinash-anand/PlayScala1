@@ -6,11 +6,16 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
 libraryDependencies += "org.scalatestplus" %% "play" % "1.1.0" % "test"
 
+libraryDependencies ++= Seq(
+  "org.reactivemongo" %% "reactivemongo" % "0.10.5.0.akka23"
+)
+
+libraryDependencies ++= Seq(
+  "org.reactivemongo" %% "play2-reactivemongo" % "0.10.5.0.akka23"
+)
+
 ScoverageSbtPlugin.ScoverageKeys.coverageExcludedPackages := "<empty>;Reverse.*;views.*;prod.*;app.*"
 ScoverageSbtPlugin.ScoverageKeys.coverageMinimum := 100
 ScoverageSbtPlugin.ScoverageKeys.coverageFailOnMinimum := true
 ScoverageSbtPlugin.ScoverageKeys.coverageHighlighting := true
 parallelExecution in Test := false
-
-
-
