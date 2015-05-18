@@ -1,1 +1,10 @@
 hello.title = Hello
+
+submit = Submit
+
+address.line-1 = Address line 1
+address.line-2 = Address line 2
+address.line-3 = Address line 3
+address.line-4 = Address line 4
+address.postcode = Postcode
+address.country = Country
