@@ -3,7 +3,7 @@ package controllers
 import forms.ApplicationForms._
 import play.api.mvc.{Action, Controller}
 
-trait HelloController extends Controller {
+trait AddressController extends Controller {
 
   def hello = Action {
     implicit request =>
@@ -24,4 +24,4 @@ trait HelloController extends Controller {
 
 }
 
-object HelloController extends HelloController
+object AddressController extends AddressController

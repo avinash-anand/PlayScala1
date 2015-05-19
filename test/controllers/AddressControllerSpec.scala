@@ -6,26 +6,26 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import org.jsoup.Jsoup
 
-class HelloControllerSpec extends PlaySpec with OneServerPerSuite {
+class AddressControllerSpec extends PlaySpec with OneServerPerSuite {
 
-  object TestHelloController extends HelloController
+  object TestAddressController extends AddressController
 
-  "HelloController" must {
+  "AddressController" must {
 
     "respond to /hello" in {
-      val result = route(FakeRequest(GET, s"/play-scala/hello")).get
+      val result = route(FakeRequest(GET, s"/play-scala/address-details")).get
       status(result) must not be(NOT_FOUND)
     }
 
     "hello" must {
 
       "respond with OK" in {
-        val result = TestHelloController.hello().apply(FakeRequest())
+        val result = TestAddressController.hello().apply(FakeRequest())
         status(result) must be(OK)
       }
 
       "must contain \"Hello World page\" as heading 1" in {
-        val result = TestHelloController.hello().apply(FakeRequest())
+        val result = TestAddressController.hello().apply(FakeRequest())
         val document = Jsoup.parse(contentAsString(result))
         document.title() must be(Messages("hello.title"))
         document.getElementById("header-1").text() must be("Hello World page")
@@ -38,7 +38,7 @@ class HelloControllerSpec extends PlaySpec with OneServerPerSuite {
       "form validation - for invalid data" must {
 
         "respond with bad request and respective errors on pages" in {
-          val result = TestHelloController.submit.apply(FakeRequest())
+          val result = TestAddressController.submit.apply(FakeRequest())
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
           document.select(".error").text() must include("This field is required")
@@ -49,7 +49,7 @@ class HelloControllerSpec extends PlaySpec with OneServerPerSuite {
       "form validation - for valid data" must {
 
         "respond with OK" in {
-          val result = TestHelloController.submit.apply(FakeRequest()
+          val result = TestAddressController.submit.apply(FakeRequest()
             .withFormUrlEncodedBody("line1" -> "ABC", "line2" -> "line 2", "postcode" -> "110085", "country" -> "India"))
           status(result) must be(OK)
         }
