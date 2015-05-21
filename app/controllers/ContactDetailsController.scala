@@ -6,7 +6,7 @@ trait ContactDetailsController extends Controller {
 
   def contactDetails = Action {
     implicit request =>
-      Ok
+      Ok(views.html.contactDetails(request))
   }
 
   def submit = Action {

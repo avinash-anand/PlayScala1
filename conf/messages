@@ -8,3 +8,5 @@ address.line-3 = Address line 3
 address.line-4 = Address line 4
 address.postcode = Postcode
 address.country = Country
+
+contact-details.title = Contact details
