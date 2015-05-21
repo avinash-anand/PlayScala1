@@ -1,0 +1,14 @@
+@(form: Form[_])(implicit request: Request[_])
+@if(form.hasErrors) {
+    <fieldset>
+        <ul>
+            @for(error <- form.errors) {
+                <li>
+                    <a href="#@error.key">
+                        @error.message
+                    </a>
+                </li>
+            }
+        </ul>
+    </fieldset>
+}

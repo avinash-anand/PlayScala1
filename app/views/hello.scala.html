@@ -4,67 +4,75 @@
 @(addressForm: Form[Address])(implicit request: Request[_])
 @import play.api.i18n.Messages
 <html>
-<header>
-    <title>@Messages("hello.title")</title>
-</header>
-<body>
-<h1 id="header-1">Hello World page</h1>
-<h3>
-    Enter address details
-</h3>
-@form(action = routes.AddressController.submit) {
-<fieldset>
-    @inputText(addressForm("line1"),
-                '_id -> "line1",
-                'placeholder -> Messages("address.line-1"),
-                'size -> 30,
-                '_label -> Messages("address.line-1"),
-                '_showErrors -> true,
-                '_showConstraints -> false)
+    <header>
+        <title>@Messages("hello.title")</title>
+    </header>
+    <body>
+        <h1 id="header-1">Hello World page</h1>
+        <h3>
+            Enter address details
+        </h3>
+        @errors_block(addressForm)
 
-    @inputText(addressForm("line2"),
-                '_id -> "line2",
-                'placeholder -> Messages("address.line-2"),
-                'size -> 30,
-                '_label -> Messages("address.line-2"),
-                '_showErrors -> true,
-                '_showConstraints -> false)
+        @form(action = routes.AddressController.submit) {
+            <div>
+                <div id="line1">
+                @inputText(addressForm("line1"),
+                    '_id -> "line1",
+                    'placeholder -> Messages("address.line-1"),
+                    'size -> 30,
+                    '_label -> Messages("address.line-1"),
+                    '_showErrors -> true,
+                    '_showConstraints -> false)
+                </div>
+                <div id="line2">
+                @inputText(addressForm("line2"),
+                    '_id -> "line2",
+                    'placeholder -> Messages("address.line-2"),
+                    'size -> 30,
+                    '_label -> Messages("address.line-2"),
+                    '_showErrors -> true,
+                    '_showConstraints -> false)
+                </div>
+                <div id="line3">
+                @inputText(addressForm("line3"),
+                    '_id -> "line3",
+                    'placeholder -> Messages("address.line-3"),
+                    'size -> 30,
+                    '_label -> Messages("address.line-3"),
+                    '_showErrors -> true,
+                    '_showConstraints -> false)
+                </div>
+                <div id="line4">
+                @inputText(addressForm("line4"),
+                    '_id -> "line4",
+                    'placeholder -> Messages("address.line-4"),
+                    'size -> 30,
+                    '_label -> Messages("address.line-4"),
+                    '_showErrors -> true,
+                    '_showConstraints -> false)
+                </div>
+                <div id="postcode">
+                @inputText(addressForm("postcode"),
+                    '_id -> "postcode",
+                    'placeholder -> Messages("address.postcode"),
+                    'size -> 30,
+                    '_label -> Messages("address.postcode"),
+                    '_showErrors -> true,
+                    '_showConstraints -> false)
+                </div>
+                <div id="country">
+                @inputText(addressForm("country"),
+                    '_id -> "country",
+                    'placeholder -> Messages("address.country"),
+                    'size -> 30,
+                    '_label -> Messages("address.country"),
+                    '_showErrors -> true,
+                    '_showConstraints -> false)
+                </div>
+                <button id="submit" type="submit" value='submit' >@Messages("submit")</button>
 
-    @inputText(addressForm("line3"),
-                '_id -> "line3",
-                'placeholder -> Messages("address.line-3"),
-                'size -> 30,
-                '_label -> Messages("address.line-3"),
-                '_showErrors -> true,
-                '_showConstraints -> false)
-
-    @inputText(addressForm("line4"),
-                '_id -> "line4",
-                'placeholder -> Messages("address.line-4"),
-                'size -> 30,
-                '_label -> Messages("address.line-4"),
-                '_showErrors -> true,
-                '_showConstraints -> false)
-
-    @inputText(addressForm("postcode"),
-                '_id -> "postcode",
-                'placeholder -> Messages("address.postcode"),
-                'size -> 30,
-                '_label -> Messages("address.postcode"),
-                '_showErrors -> true,
-                '_showConstraints -> false)
-
-    @inputText(addressForm("country"),
-                '_id -> "country",
-                'placeholder -> Messages("address.country"),
-                'size -> 30,
-                '_label -> Messages("address.country"),
-                '_showErrors -> true,
-                '_showConstraints -> false)
-
-    <button id="submit" type="submit" value='submit' >@Messages("submit")</button>
-
-</fieldset>
-}
-</body>
+            </div>
+        }
+    </body>
 </html>
