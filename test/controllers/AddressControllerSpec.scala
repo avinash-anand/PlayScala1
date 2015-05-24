@@ -1,31 +1,53 @@
 package controllers
 
+import models.Address
+import org.jsoup.Jsoup
+import org.mockito.Matchers
+import org.mockito.Mockito._
+import org.scalatest.BeforeAndAfterEach
+import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
 import play.api.i18n.Messages
+import play.api.mvc.Results
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import org.jsoup.Jsoup
+import service.ReactiveMongoService
 
-class AddressControllerSpec extends PlaySpec with OneServerPerSuite {
+import scala.concurrent.Future
 
-  object TestAddressController extends AddressController
+class AddressControllerSpec extends PlaySpec with OneServerPerSuite with MockitoSugar with BeforeAndAfterEach {
+
+  trait TestAddressService extends ReactiveMongoService[Address] {
+    override def collectionName: String = "address"
+    override val formats = Address.formats
+  }
+
+  val mockAddressService:ReactiveMongoService[Address] = mock[TestAddressService]
+
+  object TestAddressController extends AddressController {
+    override val addressService = mockAddressService
+  }
+
+  override def beforeEach {
+    reset(mockAddressService)
+  }
 
   "AddressController" must {
 
-    "respond to /hello" in {
+    "respond to /address-details" in {
       val result = route(FakeRequest(GET, s"/play-scala/address-details")).get
       status(result) must not be(NOT_FOUND)
     }
 
-    "hello" must {
+    "addressDetails" must {
 
       "respond with OK" in {
-        val result = TestAddressController.hello().apply(FakeRequest())
+        val result = TestAddressController.addressDetails().apply(FakeRequest())
         status(result) must be(OK)
       }
 
       "must contain \"Hello World page\" as heading 1" in {
-        val result = TestAddressController.hello().apply(FakeRequest())
+        val result = TestAddressController.addressDetails().apply(FakeRequest())
         val document = Jsoup.parse(contentAsString(result))
         document.title() must be(Messages("hello.title"))
         document.getElementById("header-1").text() must be("Hello World page")
@@ -48,10 +70,31 @@ class AddressControllerSpec extends PlaySpec with OneServerPerSuite {
 
       "form validation - for valid data" must {
 
-        "respond with OK" in {
+        "respond with redirect for successful save in mongo" in {
+          when(mockAddressService.create(Matchers.any())).thenReturn(Future.successful(Results.Status(CREATED)))
           val result = TestAddressController.submit.apply(FakeRequest()
             .withFormUrlEncodedBody("line1" -> "ABC", "line2" -> "line 2", "postcode" -> "110085", "country" -> "India"))
-          status(result) must be(OK)
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result).get must be("/play-scala/contact-details")
+          verify(mockAddressService, times(1)).create(Matchers.any()) must be(1)
+        }
+
+        "respond with redirect to address-details page for invalid json in mongo" in {
+          when(mockAddressService.create(Matchers.any())).thenReturn(Future.successful(Results.Status(BAD_REQUEST)))
+          val result = TestAddressController.submit.apply(FakeRequest()
+            .withFormUrlEncodedBody("line1" -> "ABC", "line2" -> "line 2", "postcode" -> "110085", "country" -> "India"))
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result).get must be("/play-scala/address-details")
+          //verify(mockAddressService, times(1)).create(Matchers.any()) must be(1)
+        }
+
+        "respond with redirect to address-details page for any other status" in {
+          when(mockAddressService.create(Matchers.any())).thenReturn(Future.successful(Results.Status(BAD_GATEWAY)))
+          val result = TestAddressController.submit.apply(FakeRequest()
+            .withFormUrlEncodedBody("line1" -> "ABC", "line2" -> "line 2", "postcode" -> "110085", "country" -> "India"))
+          status(result) must be(SEE_OTHER)
+          redirectLocation(result).get must be("/play-scala/address-details")
+          //verify(mockAddressService, times(1)).create(Matchers.any()) must be(1)
         }
 
       }

@@ -1,5 +1,5 @@
 #Route For HelloController
-GET         /address-details        controllers.AddressController.hello
+GET         /address-details        controllers.AddressController.addressDetails
 POST        /address-details        controllers.AddressController.submit
 #Route For ContactDetailsController
 GET         /contact-details        controllers.ContactDetailsController.contactDetails

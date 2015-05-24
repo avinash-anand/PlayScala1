@@ -2,6 +2,8 @@ name := "PlayScala1"
 
 version := "1.0.0-SNAPSHOT"
 
+scalaVersion := "2.11.5"
+
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
 libraryDependencies += "org.scalatestplus" %% "play" % "1.1.0" % "test"
@@ -17,4 +19,5 @@ ScoverageSbtPlugin.ScoverageKeys.coverageExcludedPackages := "<empty>;Reverse.*;
 ScoverageSbtPlugin.ScoverageKeys.coverageMinimum := 100
 ScoverageSbtPlugin.ScoverageKeys.coverageFailOnMinimum := true
 ScoverageSbtPlugin.ScoverageKeys.coverageHighlighting := true
+ScoverageSbtPlugin.ScoverageKeys.coverageOutputHTML := true
 parallelExecution in Test := false
