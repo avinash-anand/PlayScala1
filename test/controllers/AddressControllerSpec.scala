@@ -3,7 +3,7 @@ package controllers
 import models.Address
 import org.jsoup.Jsoup
 import org.mockito.Matchers
-import org.mockito.Mockito._
+import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.{OneServerPerSuite, PlaySpec}
@@ -19,16 +19,17 @@ class AddressControllerSpec extends PlaySpec with OneServerPerSuite with Mockito
 
   trait TestAddressService extends ReactiveMongoService[Address] {
     override def collectionName: String = "address"
+
     override val formats = Address.formats
   }
 
-  val mockAddressService:ReactiveMongoService[Address] = mock[TestAddressService]
+  val mockAddressService: ReactiveMongoService[Address] = mock[TestAddressService]
 
   object TestAddressController extends AddressController {
     override val addressService = mockAddressService
   }
 
-  override def beforeEach {
+  override def beforeEach: Unit = {
     reset(mockAddressService)
   }
 
@@ -36,7 +37,7 @@ class AddressControllerSpec extends PlaySpec with OneServerPerSuite with Mockito
 
     "respond to /address-details" in {
       val result = route(FakeRequest(GET, s"/play-scala/address-details")).get
-      status(result) must not be(NOT_FOUND)
+      status(result) must not be (NOT_FOUND)
     }
 
     "addressDetails" must {
@@ -76,7 +77,7 @@ class AddressControllerSpec extends PlaySpec with OneServerPerSuite with Mockito
             .withFormUrlEncodedBody("line1" -> "ABC", "line2" -> "line 2", "postcode" -> "110085", "country" -> "India"))
           status(result) must be(SEE_OTHER)
           redirectLocation(result).get must be("/play-scala/contact-details")
-          //verify(mockAddressService, times(1)).create(Matchers.any()) must be(1)
+          verify(mockAddressService, times(1)).create(Matchers.any())
         }
 
         "respond with redirect to address-details page for invalid json in mongo" in {
@@ -85,7 +86,7 @@ class AddressControllerSpec extends PlaySpec with OneServerPerSuite with Mockito
             .withFormUrlEncodedBody("line1" -> "ABC", "line2" -> "line 2", "postcode" -> "110085", "country" -> "India"))
           status(result) must be(SEE_OTHER)
           redirectLocation(result).get must be("/play-scala/address-details")
-          //verify(mockAddressService, times(1)).create(Matchers.any()) must be(1)
+          verify(mockAddressService, times(1)).create(Matchers.any())
         }
 
         "respond with redirect to address-details page for any other status" in {
@@ -94,7 +95,7 @@ class AddressControllerSpec extends PlaySpec with OneServerPerSuite with Mockito
             .withFormUrlEncodedBody("line1" -> "ABC", "line2" -> "line 2", "postcode" -> "110085", "country" -> "India"))
           status(result) must be(SEE_OTHER)
           redirectLocation(result).get must be("/play-scala/address-details")
-          //verify(mockAddressService, times(1)).create(Matchers.any()) must be(1)
+          verify(mockAddressService, times(1)).create(Matchers.any())
         }
 
       }

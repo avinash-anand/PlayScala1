@@ -12,7 +12,7 @@ class ContactDetailsControllerSpec extends PlaySpec with OneServerPerSuite {
 
     "respond to /contact-details" in {
       val result = route(FakeRequest(GET, "/play-scala/contact-details")).get
-      status(result) must not be(NOT_FOUND)
+      status(result) must not be (NOT_FOUND)
     }
 
     "contactDetails" must {

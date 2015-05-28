@@ -1,15 +1,15 @@
 package controllers
 
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.{AnyContent, Action, Controller}
 
 trait ContactDetailsController extends Controller {
 
-  def contactDetails = Action {
+  def contactDetails: Action[AnyContent] = Action {
     implicit request =>
       Ok(views.html.contactDetails(request))
   }
 
-  def submit = Action {
+  def submit: Action[AnyContent] = Action {
     implicit request =>
       Ok
   }

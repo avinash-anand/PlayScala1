@@ -21,3 +21,7 @@ ScoverageSbtPlugin.ScoverageKeys.coverageFailOnMinimum := true
 ScoverageSbtPlugin.ScoverageKeys.coverageHighlighting := true
 ScoverageSbtPlugin.ScoverageKeys.coverageOutputHTML := true
 parallelExecution in Test := false
+
+wartremoverWarnings ++= Warts.unsafe
+//wartremoverExcluded += baseDirectory.value / "src" / "main" / "scala" / "SomeFile.scala"
+wartremoverExcluded += baseDirectory.value / "conf" / "prod.routes"

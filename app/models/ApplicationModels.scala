@@ -8,7 +8,7 @@ case class Address(
                     line3: Option[String],
                     line4: Option[String],
                     postcode: String,
-                    country: String )
+                    country: String)
 
 object Address {
   implicit val formats = Json.format[Address]
