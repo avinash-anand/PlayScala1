@@ -1,7 +1,7 @@
 @import models._
 @import views.html.helper._
 
-@(addressForm: Form[Address])(implicit request: Request[_])
+@(addressForm: Form[Address], addresses: List[Address])(implicit request: Request[_])
 @import play.api.i18n.Messages
 <html>
     <header>
@@ -74,5 +74,14 @@
 
             </div>
         }
+        <div>
+            <ul>
+            @for((address, index) <- addresses.zipWithIndex) {
+                <li id="address-@index">
+                    @address
+                </li>
+            }
+            </ul>
+        </div>
     </body>
 </html>

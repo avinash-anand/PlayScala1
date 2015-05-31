@@ -4,9 +4,10 @@ import models.{Address, Contact}
 import play.api.Logger
 import play.api.Play.current
 import play.api.libs.json.{Format, JsValue}
-import play.api.mvc.{Result, Controller}
+import play.api.mvc.{Controller, Result}
 import play.modules.reactivemongo.ReactiveMongoPlugin
 import play.modules.reactivemongo.json.collection.JSONCollection
+import reactivemongo.api.Cursor
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -24,14 +25,12 @@ trait ReactiveMongoService[T] extends Controller {
   def create(data: JsValue): Future[Result] = {
     Logger.info("############## data = " + data)
     val isValid = data.validate[T].isSuccess
-    Logger.info("############## isValid = " + isValid)
     isValid match {
       case true => {
         val dataToSave = data.as[T]
         collection.insert(dataToSave) map {
           lastError =>
             Logger.info("lastError.ok = " + lastError.ok)
-            Logger.info("Successfully inserted with LastError: " + lastError)
             Created
         }
       }
@@ -42,6 +41,11 @@ trait ReactiveMongoService[T] extends Controller {
   }
 
   // TODO - define fetch method
+  def fetchAll = {
+    val cursor: Cursor[T] = collection.genericQueryBuilder.cursor[T]
+    val data: Future[List[T]] = cursor.collect[List]()
+    data
+  }
 
   // TODO - define update method
 

@@ -24,6 +24,7 @@ class AddressControllerSpec extends PlaySpec with OneServerPerSuite with Mockito
   }
 
   val mockAddressService: ReactiveMongoService[Address] = mock[TestAddressService]
+  val testAddresses = List[Address](Address("Line_1", "line_2", None, None, "110006", "India"))
 
   object TestAddressController extends AddressController {
     override val addressService = mockAddressService
@@ -43,15 +44,19 @@ class AddressControllerSpec extends PlaySpec with OneServerPerSuite with Mockito
     "addressDetails" must {
 
       "respond with OK" in {
+        when(mockAddressService.fetchAll).thenReturn(Future.successful(testAddresses))
         val result = TestAddressController.addressDetails().apply(FakeRequest())
         status(result) must be(OK)
+        verify(mockAddressService, times(1)).fetchAll
       }
 
       "must contain \"Hello World page\" as heading 1" in {
+        when(mockAddressService.fetchAll).thenReturn(Future.successful(testAddresses))
         val result = TestAddressController.addressDetails().apply(FakeRequest())
         val document = Jsoup.parse(contentAsString(result))
         document.title() must be(Messages("hello.title"))
         document.getElementById("header-1").text() must be("Hello World page")
+        verify(mockAddressService, times(1)).fetchAll
       }
 
     }
@@ -61,10 +66,12 @@ class AddressControllerSpec extends PlaySpec with OneServerPerSuite with Mockito
       "form validation - for invalid data" must {
 
         "respond with bad request and respective errors on pages" in {
+          when(mockAddressService.fetchAll).thenReturn(Future.successful(testAddresses))
           val result = TestAddressController.submit.apply(FakeRequest())
           status(result) must be(BAD_REQUEST)
           val document = Jsoup.parse(contentAsString(result))
           document.select(".error").text() must include("This field is required")
+          verify(mockAddressService, times(1)).fetchAll
         }
 
       }
@@ -73,6 +80,7 @@ class AddressControllerSpec extends PlaySpec with OneServerPerSuite with Mockito
 
         "respond with redirect for successful save in mongo" in {
           when(mockAddressService.create(Matchers.any())).thenReturn(Future.successful(Results.Status(CREATED)))
+          when(mockAddressService.fetchAll).thenReturn(Future.successful(testAddresses))
           val result = TestAddressController.submit.apply(FakeRequest()
             .withFormUrlEncodedBody("line1" -> "ABC", "line2" -> "line 2", "postcode" -> "110085", "country" -> "India"))
           status(result) must be(SEE_OTHER)
@@ -82,6 +90,7 @@ class AddressControllerSpec extends PlaySpec with OneServerPerSuite with Mockito
 
         "respond with redirect to address-details page for invalid json in mongo" in {
           when(mockAddressService.create(Matchers.any())).thenReturn(Future.successful(Results.Status(BAD_REQUEST)))
+          when(mockAddressService.fetchAll).thenReturn(Future.successful(testAddresses))
           val result = TestAddressController.submit.apply(FakeRequest()
             .withFormUrlEncodedBody("line1" -> "ABC", "line2" -> "line 2", "postcode" -> "110085", "country" -> "India"))
           status(result) must be(SEE_OTHER)
@@ -91,6 +100,7 @@ class AddressControllerSpec extends PlaySpec with OneServerPerSuite with Mockito
 
         "respond with redirect to address-details page for any other status" in {
           when(mockAddressService.create(Matchers.any())).thenReturn(Future.successful(Results.Status(BAD_GATEWAY)))
+          when(mockAddressService.fetchAll).thenReturn(Future.successful(testAddresses))
           val result = TestAddressController.submit.apply(FakeRequest()
             .withFormUrlEncodedBody("line1" -> "ABC", "line2" -> "line 2", "postcode" -> "110085", "country" -> "India"))
           status(result) must be(SEE_OTHER)

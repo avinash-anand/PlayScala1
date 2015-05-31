@@ -1,31 +1,34 @@
 package controllers
 
-import java.util.UUID
-
 import forms.ApplicationForms.addressForm
 import models.Address
 import play.api.libs.json.Json
-import play.api.mvc.{AnyContent, Session, Action, Controller}
-import service.{ReactiveMongoService, AddressService}
+import play.api.mvc.{Action, AnyContent, Controller}
+import service.{AddressService, ReactiveMongoService}
 
 import scala.concurrent.ExecutionContext.Implicits.global
-
 import scala.concurrent.Future
 
 trait AddressController extends Controller {
 
   val addressService: ReactiveMongoService[Address]
 
-  def addressDetails: Action[AnyContent] = Action {
+  def addressDetails: Action[AnyContent] = Action.async {
     implicit request =>
-      Ok(views.html.addressDetails(addressForm)).withSession(Session(Map("session-id" -> s"session-${UUID.randomUUID()}")))
+      addressService.fetchAll map {
+        addressList =>
+          Ok(views.html.addressDetails(addressForm, addressList))
+      }
   }
 
   def submit: Action[AnyContent] = Action.async {
     implicit request =>
       addressForm.bindFromRequest.fold(
         formWithErrors => {
-          Future.successful(BadRequest(views.html.addressDetails(formWithErrors)))
+          addressService.fetchAll map {
+            addressList =>
+              BadRequest(views.html.addressDetails(formWithErrors, addressList))
+          }
         },
         formData => {
           addressService.create(Json.toJson(formData)) flatMap {
